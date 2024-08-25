@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_instagram_storyboard/src/set_state_after_frame_mixin.dart';
 import 'package:flutter_instagram_storyboard/src/story_page_transform.dart';
 
+import 'dashed_circle.dart';
 import 'first_build_mixin.dart';
 import 'story_page_container_view.dart';
 
@@ -116,46 +117,70 @@ class _StoryButtonState extends State<StoryButton>
   @override
   Widget build(BuildContext context) {
     return Stack(
+      clipBehavior: Clip.none,
       children: [
         AspectRatio(
           aspectRatio: widget.buttonData.aspectRatio,
           child: Container(
-            decoration: widget.buttonData._isWatched
-                ? null
-                : widget.buttonData.borderDecoration,
+            decoration: widget.buttonData._isWatched ? null : widget.buttonData.borderDecoration,
             child: Padding(
               padding: EdgeInsets.all(
                 widget.buttonData.borderOffset,
               ),
-              child: ClipRRect(
-                borderRadius:
-                    widget.buttonData.buttonDecoration.borderRadius?.resolve(
+              child: Stack(
+                children: [
+                  ClipRRect(
+                    borderRadius: widget.buttonData.buttonDecoration.borderRadius?.resolve(
                           null,
                         ) ??
                         const BorderRadius.all(
                           Radius.circular(12.0),
                         ),
-                child: Stack(
-                  children: [
-                    Container(
-                      width: double.infinity,
-                      height: double.infinity,
-                      decoration: widget.buttonData.buttonDecoration,
-                    ),
-                    Material(
-                      color: Colors.transparent,
-                      child: InkWell(
-                        splashFactory: widget.buttonData.inkFeatureFactory ??
-                            InkRipple.splashFactory,
-                        onTap: _onTap,
-                        child: const SizedBox(
+                    child: Stack(
+                      children: [
+                        Container(
                           width: double.infinity,
                           height: double.infinity,
+                          decoration: widget.buttonData.buttonDecoration,
                         ),
-                      ),
+                        Material(
+                          color: Colors.transparent,
+                          child: InkWell(
+                            splashColor: widget.buttonData.splashColor,
+                            splashFactory: widget.buttonData.inkFeatureFactory ?? InkRipple.splashFactory,
+                            onTap: widget.buttonData.showAddButton ? widget.buttonData.onAddStoryPressed : _onTap,
+                            onLongPress: !widget.buttonData.showAddButton ? null : _onTap,
+                            child: const SizedBox(
+                              width: double.infinity,
+                              height: double.infinity,
+                            ),
+                          ),
+                        )
+                      ],
                     ),
-                  ],
-                ),
+                  ),
+                  widget.buttonData.showAddButton
+                      ? widget.buttonData.addStoryWidget ??
+                          Positioned(
+                              bottom: 0,
+                              right: 0,
+                              child: GestureDetector(
+                                onTap: widget.buttonData.onAddStoryPressed,
+                                child: DashedCircle(
+                                  child: Container(
+                                    decoration: BoxDecoration(shape: BoxShape.circle),
+                                    padding: widget.buttonData.addStoryButtonPadding ?? EdgeInsets.all(3.0),
+                                    child: Icon(
+                                      Icons.add,
+                                      size: widget.buttonData.addStoryButtonSize ?? 24,
+                                      color: Color(0xFF4D5761),
+                                    ),
+                                  ),
+                                  color: Color(0xFF4D5761),
+                                ),
+                              ))
+                      : SizedBox.shrink(),
+                ],
               ),
             ),
           ),
@@ -180,6 +205,7 @@ enum StoryWatchedContract {
 }
 
 typedef IsVisibleCallback = bool Function();
+typedef onAddStoryPressedCallback = Function();
 
 class StoryButtonData {
   static bool defaultIsVisibleCallback() {
@@ -190,6 +216,7 @@ class StoryButtonData {
   /// after the story was watched
   /// the border will disappear
   bool _isWatched = false;
+
   void markAsWatched() {
     _isWatched = true;
     _iWatchMarkable?.markAsWatched();
@@ -208,11 +235,14 @@ class StoryButtonData {
   final BoxDecoration buttonDecoration;
   final BoxDecoration borderDecoration;
   final double borderOffset;
+  final String storyId;
   final InteractiveInkFeatureFactory? inkFeatureFactory;
+  final Color? splashColor;
   final Widget child;
   final List<Widget> storyPages;
   final Widget? closeButton;
-  final Duration segmentDuration;
+  final Positioned? addStoryWidget;
+  final List<Duration> segmentDuration;
   final BoxDecoration containerBackgroundDecoration;
   final Color timelineFillColor;
   final Color timelineBackgroundColor;
@@ -221,6 +251,10 @@ class StoryButtonData {
   final double timelineSpacing;
   final EdgeInsets? timlinePadding;
   final IsVisibleCallback isVisibleCallback;
+  final onAddStoryPressedCallback? onAddStoryPressed;
+  final double? addStoryButtonSize;
+  final EdgeInsetsGeometry? addStoryButtonPadding;
+  final bool showAddButton;
 
   /// Usualy this is required for the final story
   /// to pop it out to its button mosition
@@ -255,8 +289,14 @@ class StoryButtonData {
     this.timelineSpacing = 8.0,
     this.timlinePadding,
     this.inkFeatureFactory,
+    this.showAddButton = false,
     this.pageAnimationCurve,
+    this.splashColor,
+    this.addStoryButtonSize,
+    this.addStoryButtonPadding,
+    this.addStoryWidget,
     this.isVisibleCallback = defaultIsVisibleCallback,
+    this.onAddStoryPressed,
     this.pageAnimationDuration,
     this.timelineFillColor = Colors.white,
     this.defaultCloseButtonColor = Colors.white,
@@ -264,6 +304,7 @@ class StoryButtonData {
     this.closeButton,
     required this.storyPages,
     required this.child,
+    required this.storyId,
     required this.segmentDuration,
     this.containerBackgroundDecoration = const BoxDecoration(
       color: Color.fromARGB(255, 0, 0, 0),
@@ -287,8 +328,8 @@ class StoryButtonData {
     ),
     this.borderOffset = 2.0,
   }) : assert(
-          segmentDuration.inMilliseconds % kStoryTimerTickMillis == 0 &&
-              segmentDuration.inMilliseconds >= 1000,
+          segmentDuration.first.inMilliseconds % kStoryTimerTickMillis == 0 &&
+              segmentDuration.first.inMilliseconds >= 1000,
           'Segment duration in milliseconds must be a multiple of $kStoryTimerTickMillis and not less than 1000 milliseconds',
         );
 }
@@ -299,6 +340,8 @@ abstract class IWatchMarkable {
 
 abstract class IButtonPositionable {
   Offset? get centerPosition;
+
   Offset? get leftPosition;
+
   Offset? get rightPosition;
 }
