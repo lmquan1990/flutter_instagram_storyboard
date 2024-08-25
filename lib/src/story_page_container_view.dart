@@ -8,7 +8,7 @@ import 'package:flutter_instagram_storyboard/src/first_build_mixin.dart';
 
 class StoryPageContainerView extends StatefulWidget {
   final StoryButtonData buttonData;
-  final VoidCallback onStoryComplete;
+  final Function() onStoryComplete;
   final PageController? pageController;
   final VoidCallback? onClosePressed;
 
@@ -24,8 +24,7 @@ class StoryPageContainerView extends StatefulWidget {
   State<StoryPageContainerView> createState() => _StoryPageContainerViewState();
 }
 
-class _StoryPageContainerViewState extends State<StoryPageContainerView>
-    with FirstBuildMixin {
+class _StoryPageContainerViewState extends State<StoryPageContainerView> with FirstBuildMixin {
   late StoryTimelineController _storyController;
   final Stopwatch _stopwatch = Stopwatch();
   Offset _pointerDownPosition = Offset.zero;
@@ -34,8 +33,7 @@ class _StoryPageContainerViewState extends State<StoryPageContainerView>
 
   @override
   void initState() {
-    _storyController =
-        widget.buttonData.storyController ?? StoryTimelineController();
+    _storyController = widget.buttonData.storyController ?? StoryTimelineController();
     _stopwatch.start();
     _storyController.addListener(_onTimelineEvent);
     super.initState();
@@ -58,7 +56,7 @@ class _StoryPageContainerViewState extends State<StoryPageContainerView>
     return _pageValue % 1.0 == 0.0;
   }
 
-  void _onTimelineEvent(StoryTimelineEvent event) {
+  void _onTimelineEvent(StoryTimelineEvent event, String storyId) {
     if (event == StoryTimelineEvent.storyComplete) {
       widget.onStoryComplete.call();
     }
@@ -220,13 +218,12 @@ enum StoryTimelineEvent {
   segmentComplete,
 }
 
-typedef StoryTimelineCallback = Function(StoryTimelineEvent);
+typedef StoryTimelineCallback = Function(StoryTimelineEvent, String);
 
 class StoryTimelineController {
   _StoryTimelineState? _state;
 
-  final HashSet<StoryTimelineCallback> _listeners =
-      HashSet<StoryTimelineCallback>();
+  final HashSet<StoryTimelineCallback> _listeners = HashSet<StoryTimelineCallback>();
 
   void addListener(StoryTimelineCallback callback) {
     _listeners.add(callback);
@@ -236,17 +233,17 @@ class StoryTimelineController {
     _listeners.remove(callback);
   }
 
-  void _onStoryComplete() {
-    _notifyListeners(StoryTimelineEvent.storyComplete);
+  void _onStoryComplete(String storyId) {
+    _notifyListeners(StoryTimelineEvent.storyComplete, storyId: storyId);
   }
 
-  void _onSegmentComplete() {
-    _notifyListeners(StoryTimelineEvent.segmentComplete);
+  void _onSegmentComplete(String storyId) {
+    _notifyListeners(StoryTimelineEvent.segmentComplete, storyId: storyId);
   }
 
-  void _notifyListeners(StoryTimelineEvent event) {
+  void _notifyListeners(StoryTimelineEvent event, {required String storyId}) {
     for (var e in _listeners) {
-      e.call(event);
+      e.call(event, storyId);
     }
   }
 
@@ -298,7 +295,7 @@ class _StoryTimelineState extends State<StoryTimeline> {
 
   @override
   void initState() {
-    _maxAccumulator = widget.buttonData.segmentDuration.inMilliseconds;
+    _maxAccumulator = widget.buttonData.segmentDuration[widget.buttonData.currentSegmentIndex].inMilliseconds;
     _timer = Timer.periodic(
       const Duration(
         milliseconds: kStoryTimerTickMillis,
@@ -307,8 +304,7 @@ class _StoryTimelineState extends State<StoryTimeline> {
     );
     widget.controller._state = this;
     super.initState();
-    if (widget.buttonData.storyWatchedContract ==
-        StoryWatchedContract.onStoryStart) {
+    if (widget.buttonData.storyWatchedContract == StoryWatchedContract.onStoryStart) {
       widget.buttonData.markAsWatched();
     }
   }
@@ -325,11 +321,13 @@ class _StoryTimelineState extends State<StoryTimeline> {
       _accumulatedTime += kStoryTimerTickMillis;
       if (_accumulatedTime >= _maxAccumulator) {
         if (_isLastSegment) {
+          _maxAccumulator = widget.buttonData.segmentDuration[widget.buttonData.currentSegmentIndex].inMilliseconds;
           _onStoryComplete();
         } else {
           _accumulatedTime = 0;
-          _curSegmentIndex++;
           _onSegmentComplete();
+          _curSegmentIndex++;
+          _maxAccumulator = widget.buttonData.segmentDuration[widget.buttonData.currentSegmentIndex].inMilliseconds;
         }
       }
       setState(() {});
@@ -337,19 +335,18 @@ class _StoryTimelineState extends State<StoryTimeline> {
   }
 
   void _onStoryComplete() {
-    if (widget.buttonData.storyWatchedContract ==
-        StoryWatchedContract.onStoryEnd) {
+    if (widget.buttonData.storyWatchedContract == StoryWatchedContract.onStoryEnd) {
       widget.buttonData.markAsWatched();
     }
-    widget.controller._onStoryComplete();
+    widget.buttonData.currentSegmentIndex = 0;
+    widget.controller._onStoryComplete("${widget.buttonData.storyId}-${widget.buttonData.currentSegmentIndex}");
   }
 
   void _onSegmentComplete() {
-    if (widget.buttonData.storyWatchedContract ==
-        StoryWatchedContract.onSegmentEnd) {
+    if (widget.buttonData.storyWatchedContract == StoryWatchedContract.onSegmentEnd) {
       widget.buttonData.markAsWatched();
     }
-    widget.controller._onSegmentComplete();
+    widget.controller._onSegmentComplete("${widget.buttonData.storyId}-${widget.buttonData.currentSegmentIndex}");
   }
 
   bool get _isLastSegment {
@@ -373,14 +370,18 @@ class _StoryTimelineState extends State<StoryTimeline> {
     return widget.buttonData.currentSegmentIndex;
   }
 
+  int currentSegmentIndex() => _curSegmentIndex;
+
   void nextSegment() {
     if (_isLastSegment) {
       _accumulatedTime = _maxAccumulator;
-      widget.controller._onStoryComplete();
+      widget.buttonData.currentSegmentIndex = 0;
+      widget.controller._onStoryComplete("${widget.buttonData.storyId}-${widget.buttonData.currentSegmentIndex}");
     } else {
       _accumulatedTime = 0;
-      _curSegmentIndex++;
       _onSegmentComplete();
+      _curSegmentIndex++;
+      _maxAccumulator = widget.buttonData.segmentDuration[widget.buttonData.currentSegmentIndex].inMilliseconds;
     }
   }
 
@@ -390,6 +391,7 @@ class _StoryTimelineState extends State<StoryTimeline> {
     } else {
       _accumulatedTime = 0;
       _curSegmentIndex--;
+      _maxAccumulator = widget.buttonData.segmentDuration[widget.buttonData.currentSegmentIndex].inMilliseconds;
       _onSegmentComplete();
     }
   }

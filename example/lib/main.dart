@@ -32,6 +32,7 @@ class StoryExamplePage extends StatefulWidget {
 
 class _StoryExamplePageState extends State<StoryExamplePage> {
   static const double _borderRadius = 100.0;
+  final StoryTimelineController storyController = StoryTimelineController();
 
   Widget _createDummyPage({
     required String text,
@@ -162,6 +163,24 @@ class _StoryExamplePageState extends State<StoryExamplePage> {
   }
 
   @override
+  void initState() {
+    super.initState();
+    storyController.addListener(
+      _onStoryEvent,
+    );
+  }
+
+  void _onStoryEvent(event, storyId) {
+    print('event=> ${event}  storyId ${storyId}');
+  }
+
+  @override
+  void dispose() {
+    storyController.removeListener(_onStoryEvent);
+    super.dispose();
+  }
+
+  @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
@@ -175,29 +194,35 @@ class _StoryExamplePageState extends State<StoryExamplePage> {
             pageTransform: const StoryPage3DTransform(),
             buttonDatas: [
               StoryButtonData(
+                storyId: "1",
+                showAddButton: true,
+                storyController: storyController,
                 timelineBackgroundColor: Colors.red,
                 buttonDecoration: _buildButtonDecoration('car'),
                 child: _buildButtonChild('Want a new car?'),
+                // showAddButton: true,
+                onAddStoryPressed: () {
+                  print('onAddStoryPressed');
+                },
                 borderDecoration: _buildBorderDecoration(Colors.red),
                 storyPages: [
                   _createDummyPage(
-                    text:
-                        'Want to buy a new car? Get our loan for the rest of your life!',
+                    text: 'Want to buy a new car? Get our loan for the rest of your life!',
                     imageName: 'car',
                   ),
                   _createDummyPage(
-                    text:
-                        'Can\'t return the loan? Don\'t worry, we\'ll take your soul as a collateral ;-)',
+                    text: 'Can\'t return the loan? Don\'t worry, we\'ll take your soul as a collateral ;-)',
                     imageName: 'car',
                   ),
                 ],
-                segmentDuration: const Duration(seconds: 3),
+                segmentDuration: [const Duration(seconds: 15), const Duration(seconds: 3)],
               ),
               StoryButtonData(
+                storyId: "2",
+                storyController: storyController,
                 timelineBackgroundColor: Colors.blue,
                 buttonDecoration: _buildButtonDecoration('travel_1'),
-                borderDecoration: _buildBorderDecoration(
-                    const Color.fromARGB(255, 134, 119, 95)),
+                borderDecoration: _buildBorderDecoration(const Color.fromARGB(255, 134, 119, 95)),
                 child: _buildButtonChild('Travel whereever'),
                 storyPages: [
                   _createDummyPage(
@@ -216,9 +241,15 @@ class _StoryExamplePageState extends State<StoryExamplePage> {
                     addBottomBar: false,
                   ),
                 ],
-                segmentDuration: const Duration(seconds: 3),
+                segmentDuration: [
+                  const Duration(seconds: 3),
+                  const Duration(seconds: 3),
+                  const Duration(seconds: 3),
+                ],
               ),
               StoryButtonData(
+                storyId: "3",
+                storyController: storyController,
                 timelineBackgroundColor: Colors.orange,
                 borderDecoration: _buildBorderDecoration(Colors.orange),
                 buttonDecoration: _buildButtonDecoration('house'),
@@ -229,31 +260,32 @@ class _StoryExamplePageState extends State<StoryExamplePage> {
                     imageName: 'house',
                   ),
                 ],
-                segmentDuration: const Duration(seconds: 5),
+                segmentDuration: [const Duration(seconds: 5)],
               ),
               StoryButtonData(
+                storyId: "4",
+                storyController: storyController,
                 timelineBackgroundColor: Colors.red,
                 buttonDecoration: _buildButtonDecoration('car'),
                 child: _buildButtonChild('Want a new car?'),
                 borderDecoration: _buildBorderDecoration(Colors.red),
                 storyPages: [
                   _createDummyPage(
-                    text:
-                        'Want to buy a new car? Get our loan for the rest of your life!',
+                    text: 'Want to buy a new car? Get our loan for the rest of your life!',
                     imageName: 'car',
                   ),
                   _createDummyPage(
-                    text:
-                        'Can\'t return the loan? Don\'t worry, we\'ll take your soul as a collateral ;-)',
+                    text: 'Can\'t return the loan? Don\'t worry, we\'ll take your soul as a collateral ;-)',
                     imageName: 'car',
                   ),
                 ],
-                segmentDuration: const Duration(seconds: 3),
+                segmentDuration: [const Duration(seconds: 3), const Duration(seconds: 3)],
               ),
               StoryButtonData(
+                storyId: "5",
+                storyController: storyController,
                 buttonDecoration: _buildButtonDecoration('travel_1'),
-                borderDecoration: _buildBorderDecoration(
-                    const Color.fromARGB(255, 134, 119, 95)),
+                borderDecoration: _buildBorderDecoration(const Color.fromARGB(255, 134, 119, 95)),
                 child: _buildButtonChild('Travel whereever'),
                 storyPages: [
                   _createDummyPage(
@@ -272,9 +304,10 @@ class _StoryExamplePageState extends State<StoryExamplePage> {
                     addBottomBar: false,
                   ),
                 ],
-                segmentDuration: const Duration(seconds: 3),
+                segmentDuration: [const Duration(seconds: 3), const Duration(seconds: 3), const Duration(seconds: 3)],
               ),
               StoryButtonData(
+                storyId: "6",
                 isVisibleCallback: () {
                   return false;
                 },
@@ -288,7 +321,9 @@ class _StoryExamplePageState extends State<StoryExamplePage> {
                     imageName: 'house',
                   ),
                 ],
-                segmentDuration: const Duration(seconds: 5),
+                segmentDuration: [
+                  const Duration(seconds: 5),
+                ],
               ),
             ],
           ),

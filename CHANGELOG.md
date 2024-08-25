@@ -1,3 +1,12 @@
+## 1.0.1
+- Merged https://github.com/caseyryan/flutter_instagram_storyboard/pull/6 
+Added duration for each story
+Added showAddButton for adding your story
+Manage long press and tap for own story and other user story
+Added markAsWatched callback
+Updated listener that return storyId which return storyId with current index like ( 1-0 , 1-1 )
+Thanks to https://github.com/shivbo96
+
 ## 0.0.8
 - Button list is disabled if buttonDatas is empty. In this case 
 - it will resurn SizedBox.shrink()
