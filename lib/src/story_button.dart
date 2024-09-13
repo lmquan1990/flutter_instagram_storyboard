@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_instagram_storyboard/src/set_state_after_frame_mixin.dart';
 import 'package:flutter_instagram_storyboard/src/story_page_transform.dart';
 
-import 'dashed_circle.dart';
 import 'first_build_mixin.dart';
 import 'story_page_container_view.dart';
 
@@ -122,7 +121,9 @@ class _StoryButtonState extends State<StoryButton>
         AspectRatio(
           aspectRatio: widget.buttonData.aspectRatio,
           child: Container(
-            decoration: widget.buttonData._isWatched ? null : widget.buttonData.borderDecoration,
+            decoration: widget.buttonData._isWatched
+                ? null
+                : widget.buttonData.borderDecoration,
             child: Padding(
               padding: EdgeInsets.all(
                 widget.buttonData.borderOffset,
@@ -130,11 +131,13 @@ class _StoryButtonState extends State<StoryButton>
               child: Stack(
                 children: [
                   ClipRRect(
-                    borderRadius: widget.buttonData.buttonDecoration.borderRadius?.resolve(
+                    borderRadius: widget
+                            .buttonData.buttonDecoration.borderRadius
+                            ?.resolve(
                           null,
                         ) ??
                         const BorderRadius.all(
-                          Radius.circular(12.0),
+                          Radius.circular(15.0),
                         ),
                     child: Stack(
                       children: [
@@ -143,13 +146,32 @@ class _StoryButtonState extends State<StoryButton>
                           height: double.infinity,
                           decoration: widget.buttonData.buttonDecoration,
                         ),
+                      ],
+                    ),
+                  ),
+                  ClipRRect(
+                    borderRadius: widget
+                            .buttonData.buttonDecoration.borderRadius
+                            ?.resolve(
+                          null,
+                        ) ??
+                        const BorderRadius.all(
+                          Radius.circular(15.0),
+                        ),
+                    child: Stack(
+                      children: [
+                        Container(
+                          color: Colors.black.withOpacity(0.5),
+                        ),
                         Material(
                           color: Colors.transparent,
                           child: InkWell(
                             splashColor: widget.buttonData.splashColor,
-                            splashFactory: widget.buttonData.inkFeatureFactory ?? InkRipple.splashFactory,
-                            onTap: widget.buttonData.showAddButton ? widget.buttonData.onAddStoryPressed : _onTap,
-                            onLongPress: !widget.buttonData.showAddButton ? null : _onTap,
+                            splashFactory:
+                                widget.buttonData.inkFeatureFactory ??
+                                    InkRipple.splashFactory,
+                            onTap: _onTap,
+                            onLongPress: _onTap,
                             child: const SizedBox(
                               width: double.infinity,
                               height: double.infinity,
@@ -159,27 +181,6 @@ class _StoryButtonState extends State<StoryButton>
                       ],
                     ),
                   ),
-                  widget.buttonData.showAddButton
-                      ? widget.buttonData.addStoryWidget ??
-                          Positioned(
-                              bottom: 0,
-                              right: 0,
-                              child: GestureDetector(
-                                onTap: widget.buttonData.onAddStoryPressed,
-                                child: DashedCircle(
-                                  child: Container(
-                                    decoration: BoxDecoration(shape: BoxShape.circle),
-                                    padding: widget.buttonData.addStoryButtonPadding ?? EdgeInsets.all(3.0),
-                                    child: Icon(
-                                      Icons.add,
-                                      size: widget.buttonData.addStoryButtonSize ?? 24,
-                                      color: Color(0xFF4D5761),
-                                    ),
-                                  ),
-                                  color: Color(0xFF4D5761),
-                                ),
-                              ))
-                      : SizedBox.shrink(),
                 ],
               ),
             ),
@@ -311,7 +312,7 @@ class StoryButtonData {
     ),
     this.buttonDecoration = const BoxDecoration(
       borderRadius: BorderRadius.all(
-        Radius.circular(12.0),
+        Radius.circular(15.0),
       ),
       color: Color.fromARGB(255, 226, 226, 226),
     ),
