@@ -48,7 +48,8 @@ class _StoryButtonState extends State<StoryButton>
   @override
   void didFirstBuildFinish(BuildContext context) {
     setState(() {
-      _buttonWidth = context.size?.width;
+      // _buttonWidth = context.size?.width;
+      _buttonWidth = 200;
     });
   }
 
