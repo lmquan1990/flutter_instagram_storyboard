@@ -50,6 +50,7 @@ class _StoryButtonState extends State<StoryButton>
     setState(() {
       // _buttonWidth = context.size?.width;
       _buttonWidth = 200;
+      
     });
   }
 
