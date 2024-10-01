@@ -48,9 +48,7 @@ class _StoryButtonState extends State<StoryButton>
   @override
   void didFirstBuildFinish(BuildContext context) {
     setState(() {
-      // _buttonWidth = context.size?.width;
-      _buttonWidth = 200;
-      
+      _buttonWidth = context.size?.width;
     });
   }
 
@@ -123,6 +121,8 @@ class _StoryButtonState extends State<StoryButton>
         AspectRatio(
           aspectRatio: widget.buttonData.aspectRatio,
           child: Container(
+            width: 300,
+            height: 300,
             decoration: widget.buttonData._isWatched
                 ? null
                 : widget.buttonData.borderDecoration,
