@@ -118,70 +118,28 @@ class _StoryButtonState extends State<StoryButton>
     return Stack(
       clipBehavior: Clip.none,
       children: [
-        AspectRatio(
-          aspectRatio: widget.buttonData.aspectRatio,
-          child: Container(
-            width: 300,
-            height: 300,
-            decoration: widget.buttonData._isWatched
-                ? null
-                : widget.buttonData.borderDecoration,
-            child: Padding(
-              padding: EdgeInsets.all(
-                widget.buttonData.borderOffset,
-              ),
+        Container(
+          decoration: widget.buttonData._isWatched
+              ? null
+              : widget.buttonData.borderDecoration,
+          child: Padding(
+            padding: EdgeInsets.all(
+              widget.buttonData.borderOffset,
+            ),
+            child: ClipRRect(
+              borderRadius:
+                  widget.buttonData.buttonDecoration.borderRadius?.resolve(
+                        null,
+                      ) ??
+                      const BorderRadius.all(
+                        Radius.circular(15.0),
+                      ),
               child: Stack(
                 children: [
-                  ClipRRect(
-                    borderRadius: widget
-                            .buttonData.buttonDecoration.borderRadius
-                            ?.resolve(
-                          null,
-                        ) ??
-                        const BorderRadius.all(
-                          Radius.circular(15.0),
-                        ),
-                    child: Stack(
-                      children: [
-                        Container(
-                          width: double.infinity,
-                          height: double.infinity,
-                          decoration: widget.buttonData.buttonDecoration,
-                        ),
-                      ],
-                    ),
-                  ),
-                  ClipRRect(
-                    borderRadius: widget
-                            .buttonData.buttonDecoration.borderRadius
-                            ?.resolve(
-                          null,
-                        ) ??
-                        const BorderRadius.all(
-                          Radius.circular(15.0),
-                        ),
-                    child: Stack(
-                      children: [
-                        Container(
-                          color: Colors.black.withOpacity(0.5),
-                        ),
-                        Material(
-                          color: Colors.transparent,
-                          child: InkWell(
-                            splashColor: widget.buttonData.splashColor,
-                            splashFactory:
-                                widget.buttonData.inkFeatureFactory ??
-                                    InkRipple.splashFactory,
-                            onTap: _onTap,
-                            onLongPress: _onTap,
-                            child: const SizedBox(
-                              width: double.infinity,
-                              height: double.infinity,
-                            ),
-                          ),
-                        )
-                      ],
-                    ),
+                  Container(
+                    width: double.infinity,
+                    height: double.infinity,
+                    decoration: widget.buttonData.buttonDecoration,
                   ),
                 ],
               ),
