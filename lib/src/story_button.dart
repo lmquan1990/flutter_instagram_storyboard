@@ -136,10 +136,42 @@ class _StoryButtonState extends State<StoryButton>
                       ),
               child: Stack(
                 children: [
+                  // Container(
+                  //   width: double.infinity,
+                  //   height: double.infinity,
+                  //   decoration: widget.buttonData.buttonDecoration,
+                  // ),
                   Container(
-                    width: double.infinity,
-                    height: double.infinity,
-                    decoration: widget.buttonData.buttonDecoration,
+                    height: 150,
+                    width: 150,
+                    padding: const EdgeInsets.only(top: 10, left: 10),
+                    decoration: BoxDecoration(
+                      color: Colors.teal,
+                      borderRadius: BorderRadius.circular(15.0),
+                    ),
+                    child: Stack(
+                      children: const [
+                        Align(
+                          alignment: Alignment.topLeft,
+                          child: Text(
+                            "History",
+                            style: TextStyle(
+                              color: Colors.white,
+                              fontSize: 25,
+                            ),
+                          ),
+                        ),
+                        Positioned(
+                          right: -25,
+                          bottom: -25,
+                          child: Icon(
+                            Icons.history,
+                            color: Colors.cyan,
+                            size: 120,
+                          ),
+                        ),
+                      ],
+                    ),
                   ),
                   Material(
                     color: Colors.transparent,
