@@ -128,51 +128,52 @@ class _StoryButtonState extends State<StoryButton>
             ),
             child: ClipRRect(
               borderRadius:
-                  widget.buttonData.buttonDecoration.borderRadius?.resolve(
-                        null,
-                      ) ??
+                  // widget.buttonData.buttonDecoration.borderRadius?.resolve(
+                  //       null,
+                  //     ) ??
                       const BorderRadius.all(
                         Radius.circular(15.0),
                       ),
               child: Stack(
                 children: [
+                  widget.buttonData.buttonContainer,
                   // Container(
                   //   width: double.infinity,
                   //   height: double.infinity,
                   //   decoration: widget.buttonData.buttonDecoration,
                   // ),
-                  Container(
-                    height: 150,
-                    width: 150,
-                    padding: const EdgeInsets.only(top: 10, left: 10),
-                    decoration: BoxDecoration(
-                      color: Colors.teal,
-                      borderRadius: BorderRadius.circular(15.0),
-                    ),
-                    child: Stack(
-                      children: const [
-                        Align(
-                          alignment: Alignment.topLeft,
-                          child: Text(
-                            "History",
-                            style: TextStyle(
-                              color: Colors.white,
-                              fontSize: 25,
-                            ),
-                          ),
-                        ),
-                        Positioned(
-                          right: -25,
-                          bottom: -25,
-                          child: Icon(
-                            Icons.history,
-                            color: Colors.cyan,
-                            size: 120,
-                          ),
-                        ),
-                      ],
-                    ),
-                  ),
+                  // Container(
+                  //   height: 150,
+                  //   width: 150,
+                  //   padding: const EdgeInsets.only(top: 10, left: 10),
+                  //   decoration: BoxDecoration(
+                  //     color: Colors.teal,
+                  //     borderRadius: BorderRadius.circular(15.0),
+                  //   ),
+                  //   child: Stack(
+                  //     children: const [
+                  //       Align(
+                  //         alignment: Alignment.topLeft,
+                  //         child: Text(
+                  //           "History",
+                  //           style: TextStyle(
+                  //             color: Colors.white,
+                  //             fontSize: 25,
+                  //           ),
+                  //         ),
+                  //       ),
+                  //       Positioned(
+                  //         right: -25,
+                  //         bottom: -25,
+                  //         child: Icon(
+                  //           Icons.history,
+                  //           color: Colors.cyan,
+                  //           size: 120,
+                  //         ),
+                  //       ),
+                  //     ],
+                  //   ),
+                  // ),
                   Material(
                     color: Colors.transparent,
                     child: InkWell(
@@ -239,7 +240,7 @@ class StoryButtonData {
   final Curve? pageAnimationCurve;
   final Duration? pageAnimationDuration;
   final double aspectRatio;
-  final BoxDecoration buttonDecoration;
+  final Widget buttonContainer;
   final BoxDecoration borderDecoration;
   final double borderOffset;
   final String storyId;
@@ -316,12 +317,13 @@ class StoryButtonData {
     this.containerBackgroundDecoration = const BoxDecoration(
       color: Color.fromARGB(255, 0, 0, 0),
     ),
-    this.buttonDecoration = const BoxDecoration(
-      borderRadius: BorderRadius.all(
-        Radius.circular(15.0),
-      ),
-      color: Color.fromARGB(255, 226, 226, 226),
-    ),
+    // this.buttonDecoration = const BoxDecoration(
+    //   borderRadius: BorderRadius.all(
+    //     Radius.circular(15.0),
+    //   ),
+    //   color: Color.fromARGB(255, 226, 226, 226),
+    // ),
+    required this.buttonContainer,
     this.borderDecoration = const BoxDecoration(
       borderRadius: BorderRadius.all(
         Radius.circular(15.0),
