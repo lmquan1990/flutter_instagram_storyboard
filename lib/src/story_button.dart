@@ -141,6 +141,20 @@ class _StoryButtonState extends State<StoryButton>
                     height: double.infinity,
                     decoration: widget.buttonData.buttonDecoration,
                   ),
+                  Material(
+                    color: Colors.transparent,
+                    child: InkWell(
+                      splashColor: widget.buttonData.splashColor,
+                      splashFactory: widget.buttonData.inkFeatureFactory ??
+                          InkRipple.splashFactory,
+                      onTap: _onTap,
+                      onLongPress: _onTap,
+                      child: const SizedBox(
+                        width: double.infinity,
+                        height: double.infinity,
+                      ),
+                    ),
+                  ),
                 ],
               ),
             ),
