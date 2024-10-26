@@ -76,39 +76,101 @@ class _StoryListViewState extends State<StoryListView> {
     if (buttonDatas.isEmpty) {
       return const SizedBox.shrink();
     }
+
     return SizedBox(
       height: widget.listHeight,
       child: Padding(
-        padding: EdgeInsets.only(
-          top: widget.paddingTop,
-          bottom: widget.paddingBottom,
-        ),
-        child: ListView.builder(
-          controller: _scrollController,
-          physics: widget.physics,
-          scrollDirection: Axis.horizontal,
-          itemBuilder: (c, int index) {
-            final isLast = index == buttonDatas.length - 1;
-            final isFirst = index == 0;
-            final buttonData = buttonDatas[index];
-            return Padding(
-              padding: EdgeInsets.only(
-                left: isFirst ? widget.paddingLeft : 0.0,
-                right: isLast ? widget.paddingRight : widget.buttonSpacing,
+          padding: EdgeInsets.only(
+            top: widget.paddingTop,
+            bottom: widget.paddingBottom,
+          ),
+          child: Center(
+            child: ConstrainedBox(
+              constraints: const BoxConstraints(maxHeight: 200),
+              child: CarouselView(
+                itemExtent: 330,
+                shrinkExtent: 200,
+                children:
+                    List<Widget>.generate(buttonDatas.length, (int index) {
+                  return ContainedLayoutCard(
+                      buttonDatas: widget.buttonDatas,
+                      index: index,
+                      buttonSpacing: widget.buttonSpacing,
+                      paddingLeft: widget.paddingLeft,
+                      paddingRight: widget.paddingRight,
+                      buttonWidth: widget.buttonWidth,
+                      pageTransform: widget.pageTransform,
+                      scrollController: _scrollController,
+                      onButtonPressed: _onButtonPressed);
+                }),
               ),
-              child: SizedBox(
-                width: widget.buttonWidth,
-                child: StoryButton(
-                  buttonData: buttonData,
-                  allButtonDatas: buttonDatas,
-                  pageTransform: widget.pageTransform,
-                  storyListViewController: _scrollController,
-                  onPressed: _onButtonPressed,
-                ),
-              ),
-            );
-          },
-          itemCount: buttonDatas.length,
+            ),
+          )
+          // ListView.builder(
+          //       controller: _scrollController,
+          //       physics: widget.physics,
+          //       scrollDirection: Axis.horizontal,
+          //       itemBuilder: (c, int index) {
+          //         return ContainedLayoutCard(
+          //             buttonDatas: widget.buttonDatas,
+          //             index: index,
+          //             buttonSpacing: widget.buttonSpacing,
+          //             paddingLeft: widget.paddingLeft,
+          //             paddingRight: widget.paddingRight,
+          //             buttonWidth: widget.buttonWidth,
+          //             pageTransform: widget.pageTransform,
+          //             scrollController: _scrollController,
+          //             onButtonPressed: _onButtonPressed);
+          //       },
+          //       itemCount: buttonDatas.length,
+          //     ),
+          ),
+    );
+  }
+}
+
+class ContainedLayoutCard extends StatelessWidget {
+  const ContainedLayoutCard({
+    super.key,
+    required this.index,
+    required this.buttonDatas,
+    required this.paddingLeft,
+    required this.paddingRight,
+    required this.buttonSpacing,
+    required this.buttonWidth,
+    required this.pageTransform,
+    required this.scrollController,
+    required this.onButtonPressed,
+  });
+
+  final int index;
+  final List<StoryButtonData> buttonDatas;
+  final double paddingLeft;
+  final double paddingRight;
+  final double buttonSpacing;
+  final double buttonWidth;
+  final IStoryPageTransform? pageTransform;
+  final ScrollController scrollController;
+  final Function(StoryButtonData storyButtonData) onButtonPressed;
+
+  @override
+  Widget build(BuildContext context) {
+    final isLast = index == buttonDatas.length - 1;
+    final isFirst = index == 0;
+    final buttonData = buttonDatas[index];
+    return Padding(
+      padding: EdgeInsets.only(
+        left: isFirst ? paddingLeft : 0.0,
+        right: isLast ? paddingRight : buttonSpacing,
+      ),
+      child: SizedBox(
+        width: buttonWidth,
+        child: StoryButton(
+          buttonData: buttonData,
+          allButtonDatas: buttonDatas,
+          pageTransform: pageTransform,
+          storyListViewController: scrollController,
+          onPressed: onButtonPressed,
         ),
       ),
     );

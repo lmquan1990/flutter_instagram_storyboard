@@ -188,7 +188,6 @@ class _StoryExamplePageState extends State<StoryExamplePage> {
                 storyId: "1",
                 storyController: storyController,
                 timelineBackgroundColor: Colors.red,
-                buttonDecoration: _buildButtonDecoration('car'),
                 child: _buildButtonChild('Want a new car?'),
                 borderDecoration: _buildBorderDecoration(Colors.red),
                 storyPages: [
@@ -212,7 +211,6 @@ class _StoryExamplePageState extends State<StoryExamplePage> {
                 storyId: "2",
                 storyController: storyController,
                 timelineBackgroundColor: Colors.blue,
-                buttonDecoration: _buildButtonDecoration('travel_1'),
                 borderDecoration: _buildBorderDecoration(
                     const Color.fromARGB(255, 134, 119, 95)),
                 child: _buildButtonChild('Travel whereever'),
@@ -244,7 +242,6 @@ class _StoryExamplePageState extends State<StoryExamplePage> {
                 storyController: storyController,
                 timelineBackgroundColor: Colors.orange,
                 borderDecoration: _buildBorderDecoration(Colors.orange),
-                buttonDecoration: _buildButtonDecoration('house'),
                 child: _buildButtonChild('Buy a house anywhere'),
                 storyPages: [
                   _createDummyPage(
@@ -258,7 +255,6 @@ class _StoryExamplePageState extends State<StoryExamplePage> {
                 storyId: "4",
                 storyController: storyController,
                 timelineBackgroundColor: Colors.red,
-                buttonDecoration: _buildButtonDecoration('car'),
                 child: _buildButtonChild('Want a new car?'),
                 borderDecoration: _buildBorderDecoration(Colors.red),
                 storyPages: [
@@ -315,7 +311,6 @@ class _StoryExamplePageState extends State<StoryExamplePage> {
                 },
                 timelineBackgroundColor: Colors.orange,
                 borderDecoration: _buildBorderDecoration(Colors.orange),
-                buttonDecoration: _buildButtonDecoration('house'),
                 child: _buildButtonChild('Buy a house anywhere'),
                 storyPages: [
                   _createDummyPage(
