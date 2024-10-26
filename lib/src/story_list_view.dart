@@ -88,8 +88,8 @@ class _StoryListViewState extends State<StoryListView> {
             child: ConstrainedBox(
               constraints: const BoxConstraints(maxHeight: 200),
               child: CarouselView(
-                itemExtent: 330,
-                shrinkExtent: 200,
+                itemExtent: 160,
+                shrinkExtent: 40,
                 children:
                     List<Widget>.generate(buttonDatas.length, (int index) {
                   return ContainedLayoutCard(
@@ -105,25 +105,7 @@ class _StoryListViewState extends State<StoryListView> {
                 }),
               ),
             ),
-          )
-          // ListView.builder(
-          //       controller: _scrollController,
-          //       physics: widget.physics,
-          //       scrollDirection: Axis.horizontal,
-          //       itemBuilder: (c, int index) {
-          //         return ContainedLayoutCard(
-          //             buttonDatas: widget.buttonDatas,
-          //             index: index,
-          //             buttonSpacing: widget.buttonSpacing,
-          //             paddingLeft: widget.paddingLeft,
-          //             paddingRight: widget.paddingRight,
-          //             buttonWidth: widget.buttonWidth,
-          //             pageTransform: widget.pageTransform,
-          //             scrollController: _scrollController,
-          //             onButtonPressed: _onButtonPressed);
-          //       },
-          //       itemCount: buttonDatas.length,
-          //     ),
+          ),
           ),
     );
   }
